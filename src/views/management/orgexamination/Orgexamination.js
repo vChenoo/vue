@@ -1,4 +1,4 @@
-import {notifyConfig} from '@/utils/'
+import {notifyConfig, pickerRangeTimeOptions, formatDate} from '@/utils/'
 import {getWhether} from '@/api/constant'
 import {queryOrganization, queryOrgexamination, queryOrgGroup} from '@/api/management'
 
@@ -28,41 +28,68 @@ export default {
 					{required: true, message: '请选择分组类型', trigger: 'change'}
 				]
 			},
-      pickerOption: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick (picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick (picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick (picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
+      pickerOption: pickerRangeTimeOptions,
 			formTemp: null, // 表单渲染值
       indexTemp: null,  //  表单渲染值对应序号
-      visibleList: true,  // 列表是否可见
+      visibleList: 1,  // 列表是否可见
       statusForm: 'create', //  'update' or 'create'
       orgOption: [],				// 下拉 体检单位
       whetherOption: [],    // 下拉 是否
       orgGroups: [],			  // 下拉 单位分组
-      orgOptSel: []         // 查询下拉 体检单位
+      orgOptSel: [],        // 查询下拉 体检单位
+      chargeTemp: null,     // 收费 表单
+      chargeInfo: {         // 收费 收费信息
+        chargename: '',
+        code: '',
+        number: '225',  // 合计金额
+        cpreceivable: '222.89', // 合计应收
+        balance: '+0.11',  // 凑整差额
+        total: '223'     // 本次应收
+      },
+      settlement: {
+        code: '0001',
+        time: formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss'),
+        total: '223',
+        actualtotal: '200',
+        balance: '23'
+      },
+      cash: '200',
+      cashChange: '0.00',
+      isInvoice: false,
+      groupList: [
+        {
+          name: '男职工-已婚',
+          cash: '350',
+          counttype: '单位支付',
+          number: '80',
+          discount: '90',
+          cashtotal: '25200'
+        },
+        {
+          name: '男职工-未婚',
+          cash: '300',
+          counttype: '单位支付',
+          number: '40',
+          discount: '80',
+          cashtotal: '9600'
+        },
+        {
+          name: '女职工-已婚',
+          cash: '350',
+          counttype: '单位支付',
+          number: '60',
+          discount: '90',
+          cashtotal: '18900'
+        },
+        {
+          name: '女职工-未婚',
+          cash: '300',
+          counttype: '单位支付',
+          number: '45',
+          discount: '90',
+          cashtotal: '12150'
+        }
+      ]
 		}
 	},
 	created () {
@@ -96,6 +123,13 @@ export default {
   	indexMethod (index) { // 表格序号
       return this.queryData.limit * (this.queryData.page - 1) + 1 + index
     },
+    orgFilter(value) {
+      let valArr = []
+      valArr = this.orgOption.filter(val => {
+        return val.code === value
+      })
+      return valArr.length ? valArr[0].name : ''
+    },
     /* 动画 */
     enter (el, done) {
       if (this.$refs['formEdit']) {
@@ -105,7 +139,7 @@ export default {
         this.$store.dispatch('set_bread_name', '')
       }
     },
-  	/* 交互方法 */
+  	/* 交互方法 编辑单位体检 */
 		clickQuery () {
 			console.log('单位体检记录查询')
 		},
@@ -149,14 +183,14 @@ export default {
     clickCreate () { // 新增交互
       this.statusForm = 'create'
       this.resetFormTemp()
-      this.visibleList = false
+      this.visibleList = 2
     },
     createData () {
       this.$refs['formEdit'].validate((valid) => {
         if (valid) {
           console.log(this.formTemp)
           this.tableData.unshift(this.formTemp)
-          this.visibleList = true
+          this.visibleList = 1
           this.$notify(notifyConfig('新增', 'success'))
         } else {
           console.log('校验不通过')
@@ -168,7 +202,7 @@ export default {
       this.statusForm = 'update'
       this.indexTemp = index
       this.formTemp = Object.assign({}, row)
-      this.visibleList = false
+      this.visibleList = 2
     },
     updateData () {
       this.$refs['formEdit'].validate((valid) => {
@@ -176,7 +210,7 @@ export default {
           console.log(this.formTemp)
           let tbIndex = this.indexMethod(this.indexTemp) - 1
           this.tableData.splice(tbIndex, 1, this.formTemp)
-          this.visibleList = true
+          this.visibleList = 1
           this.$notify(notifyConfig('更新', 'success'))
         } else {
           console.log('校验不通过')
@@ -194,6 +228,46 @@ export default {
         this.tableData.splice(tbIndex, 1)
         this.$notify(notifyConfig('删除', 'success'))
       }).catch(() => {})
+    },
+    /* 交互方法 收费 */
+    clickCharge (row, index) { // 编辑交互
+      this.chargeTemp = Object.assign({}, row)
+      this.chargeTemp.organizationName = this.orgFilter(this.chargeTemp.organization)
+      this.visibleList = 3
+      this.chargeInfo.chargename = this.chargeTemp.organizationName
+      this.chargeInfo.code = this.chargeTemp.code
+    },
+    clickArrearage(row) {
+      this.$confirm('你确定要设置此记录为欠费吗?', '确认欠费', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$notify(notifyConfig('设置欠费', 'success'))
+      }).catch(() => {})
+    },
+    clickOver(row) {
+      this.$confirm('你确定要设置此记录为完结吗?', '确认完结', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$set(row, 'isover', '1')
+        this.$notify(notifyConfig('设置完结', 'success'))
+      }).catch(() => {})
+    },
+    clickCancelOver(row) {
+      this.$confirm('你确定要设置此记录为取消完结吗?', '取消完结', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$set(row, 'isover', '2')
+        this.$notify(notifyConfig('取消完结', 'success'))
+      }).catch(() => {})
+    },
+    limitNumber(event) {
+      event.target.value = event.target.value.replace(/-/g, '')
     }
 	}
 }

@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request_mock'
 
 export function queryTestproject(data) {
 	return request({
@@ -27,6 +27,18 @@ export function queryConclusion(data) {
 export function queryDiagnose(data) {
 	return request({
 		url: '/testsetting/diagnose',
+		method: 'get'
+	})
+}
+export function queryResult(data) {
+	return request({
+		url: '/testsetting/result',
+		method: 'get'
+	})
+}
+export function queryWorkstation(data) {
+	return request({
+		url: '/testsetting/workstation',
 		method: 'get'
 	})
 }

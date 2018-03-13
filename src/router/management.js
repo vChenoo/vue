@@ -6,12 +6,28 @@ export default {
   name: 'management',
   component: Home,
   meta: {
-    icon: 'tj-management',
+    icon: 'tj-person',
     title: '体检管理'
   },
-  redirect: '/management/personalinfo',
+  redirect: '/management/personalexamination',
   children: [
     {
+      path: 'personalexamination',
+      name: 'personalexamination',
+      meta: {
+        icon: 'tj-zytz',
+        title: '个人体检管理'
+      },
+      component: Management.Personalexamination
+    }, {
+      path: 'reportsend',
+      name: 'reportsend',
+      meta: {
+        icon: 'tj-zytz',
+        title: '体检报告发放'
+      },
+      component: Management.Reportsend
+    }, {
       path: 'personalinfo',
       name: 'personalinfo',
       meta: {
@@ -43,6 +59,14 @@ export default {
         title: '单位体检管理'
       },
       component: Management.Orgexamination
+    }, {
+      path: 'returnvisit',
+      name: 'returnvisit',
+      meta: {
+        icon: 'tj-zytz',
+        title: '复诊通知管理'
+      },
+      component: Management.Returnvisit
     }
   ]
 }

@@ -1,5 +1,5 @@
 export default {
-	name: 'register',
+	name: 'systemregister',
 	data () {
 		return {
 			registerData: {

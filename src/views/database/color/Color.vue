@@ -28,7 +28,7 @@
 		    </div>
 		  </div>
 		  <div key="edit" class="page-show" v-else>
-		    <el-form class="edit-form" :model="formTemp" :rules="rules" ref="formEdit" size="small" label-width="120px">
+		    <el-form class="line-form" label-width="30%" label-position="right" :model="formTemp" :rules="rules" ref="formEdit" size="small">
 		      <el-form-item label="业务类型名称" prop="name">
 		        <el-input v-model="formTemp.name"></el-input>
 		      </el-form-item>
@@ -38,13 +38,11 @@
 		      <el-form-item label="最后修改时间" prop='lasttime' v-if="statusForm=='update'">
 		        <span>{{formTemp.lasttime}}</span>
 		      </el-form-item>
-		      <el-form-item>
-		        <div class="submit-container">
-		          <el-button v-if="statusForm=='create'" type="primary" @click="createData">确定</el-button>
-		          <el-button v-else type="primary" @click="updateData">确定</el-button>
-		          <el-button @click="visibleList = true">返回</el-button>
-		        </div>
-		      </el-form-item>
+	        <div class="submit-container">
+	          <el-button v-if="statusForm=='create'" type="primary" @click="createData">确定</el-button>
+	          <el-button v-else type="primary" @click="updateData">确定</el-button>
+	          <el-button @click="visibleList = true">返回</el-button>
+	        </div>
 		    </el-form>
 		  </div>
 		</transition>

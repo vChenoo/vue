@@ -9,6 +9,8 @@ import Database from './database/'
 import Testsetting from './testsetting/'
 import Register from './register/'
 import Management from './management/'
+import Doctor from './doctor/'
+import History from './history/'
 
 export {
   Login,
@@ -21,5 +23,7 @@ export {
   Database,
   Testsetting,
   Register,
-  Management
+  Management,
+  Doctor,
+  History
 }

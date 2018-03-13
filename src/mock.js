@@ -1,8 +1,14 @@
 import Mock from 'mockjs'
 /* const Random = Mock.Random */
 
+Mock.mock('/login', {
+	'data': {
+		'username': 'tester'
+	}
+})
+
 /* 常量 */
-let _Vcode = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
+var _Vcode = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
 Mock.mock('/constant/whether', {
 	'data|2': [{
 		'name|+1': ['是', '否'],
@@ -118,8 +124,20 @@ Mock.mock('/constant/nature', {
 	}]
 })
 Mock.mock('/constant/cardtype', {
+	'data|5': [{
+		'name|+1': ['身份证', '护照', '医保卡', '健康卡', '其他'],
+		'code|+1': _Vcode.slice(0)
+	}]
+})
+Mock.mock('/constant/workstation', {
+	'data|6': [{
+		'name|+1': ['工作台1', '工作台2', '工作台3', '工作台4', '工作台5', '工作台6'],
+		'code|+1': _Vcode.slice(0)
+	}]
+})
+Mock.mock('/constant/totalgroup', {
 	'data|4': [{
-		'name|+1': ['身份证', '护照', '医保卡', '健康卡'],
+		'name|+1': ['总检分组1', '总检分组2', '总检分组3', '总检分组4'],
 		'code|+1': _Vcode.slice(0)
 	}]
 })
@@ -206,7 +224,7 @@ Mock.mock('/database/collect', {
 })
 let _othercharges = ['抽血费', '其他相关费']
 Mock.mock('/database/othercharges', {
-	'data|4': [{
+	'data|2': [{
 		'lasttime': '@datetime',
 		'lastaccount': '@cname',
 		'name|+1': _othercharges,
@@ -233,7 +251,7 @@ Mock.mock('/database/consumable', {
 	}]
 })
 /* 系统工具 */
-Mock.mock('/database/systemlog', {
+Mock.mock('/systemtools/systemlog', {
 	'data|22-33': [{
 		'date': '@datetime',
 		'name': '@cname',
@@ -242,6 +260,15 @@ Mock.mock('/database/systemlog', {
 		'content': '@cparagraph',
 		'number': '@id',
 		'ipaddress': '@ip'
+	}]
+})
+Mock.mock('/systemtools/account', {
+	'data|3': [{
+		'name': '@cname',
+		'account': '@string',
+		'isenabled|1': _Vcode.slice(0, 2),
+		'lasttime': '@datetime',
+		'lastip': '@ip'
 	}]
 })
 /* 体检设置 */
@@ -259,6 +286,7 @@ Mock.mock('/testsetting/testproject', {
 		'unit': '@string',
 		'resulttype|1': _Vcode.slice(0, 2),
 		'result': '@string',
+		'ispositive|1': _Vcode.slice(0, 2),
 		'isenabled|1': _Vcode.slice(0, 2)
 	}]
 })
@@ -297,7 +325,7 @@ Mock.mock('/testsetting/groupproject', {
 		'pinyin': '@string',
 		'wubi': '@string',
 		'isenabled|1': _Vcode.slice(0, 2),
-		'project': [],
+		'project': ['1', '2', '3', '4'],
 		'consumable': []
 	}]
 })
@@ -314,10 +342,12 @@ Mock.mock('/testsetting/package', {
 		'profile': '@cparagraph',
 		'groupproject': [{
 			'name': '身高、体重、血压',
-			'code': '2'
+			'code': '2',
+			'price': '10'
 		}, {
 			'name': '心电图',
-			'code': '5'
+			'code': '5',
+			'price': '30'
 		}],
 		'originalprice': 0,
 		'discount|50-100': 90,
@@ -333,10 +363,13 @@ Mock.mock('/testsetting/conclusion', {
 		'code|+1': _Vcode.slice(0),
 		'remark': '@cparagraph',
 		'lasttime': '@datetime',
-		'lastaccount': '@cname'
+		'lastaccount': '@cname',
+		'value': function() {
+			return this.name
+		}
 	}]
 })
-let _diagnose = ['OSAS综合征', '肥厚性鼻炎', '肾明显肿大，多发性囊性病变，考虑为多发性肾uuuu', '慢性中耳炎', '神经性耳聋', '声带小结', '声嘶', '悬肉样变', '颌下淋巴结肿大', '陈旧性鼓膜穿孔', '泥沙样胆囊结石']
+let _diagnose = ['OSAS综合征', '肥厚性鼻炎', '多发性肾', '慢性中耳炎', '神经性耳聋', '声带小结', '声嘶', '悬肉样变', '颌下淋巴结肿大', '陈旧性鼓膜穿孔', '泥沙样胆囊结石']
 Mock.mock('/testsetting/diagnose', {
 	'data|11': [{
 		'name|+1': _diagnose,
@@ -352,6 +385,56 @@ Mock.mock('/testsetting/diagnose', {
 		'suggestion': []
 	}]
 })
+let _result = ['偏低', '正常', '偏高']
+Mock.mock('/testsetting/result', {
+	'data|3': [{
+		'desc|+1': _result,
+		'code|+1': _Vcode.slice(0),
+		'diagnose|1': _Vcode.slice(0, 11),
+		'lower|1-100': 18,
+		'lowerunit': function() {
+			if (this.lower > 12) {
+				return '岁'
+			} else {
+				return ['月', '岁'][Math.round(Math.random())]
+			}
+		},
+		'upper': function() {
+			return this.lower + 18 < 100 ? this.lower + 18 : 100
+		},
+		'upperunit': function() {
+			if (this.upper > 12 || this.lowerunit === '月') {
+				return '岁'
+			} else {
+				return ['月', '岁'][Math.round(Math.random())]
+			}
+		},
+		'min': 1,
+		'max': 10,
+		'isnormal|1': _Vcode.slice(0, 2),
+		'ispositive|1': _Vcode.slice(0, 2),
+		'isresultin|1': _Vcode.slice(0, 2),
+		'isdiagnosein|1': _Vcode.slice(0, 2),
+		'sex|1': _Vcode.slice(1, 3),
+		'pinyin': '@string',
+		'wubi': '@string'
+	}]
+})
+let _workstation = ['工作台1', '工作台2', '工作台3', '工作台4', '工作台5', '工作台6']
+Mock.mock('/testsetting/workstation', {
+	'data|6': [{
+		'name|+1': _workstation,
+		'code|+1': _Vcode.slice(0),
+		'department|1': _Vcode.slice(0, 10),
+		'clinical|1': _Vcode.slice(0, 11),
+		'tip': '@string',
+		'address': '@string',
+		'isenabled|1': _Vcode.slice(0, 2),
+		'account': '1',
+		'groupproject': '1'
+	}]
+})
+/* 体检登记 */
 Mock.mock('/register/prepersonal', {
 	'data|16-30': [{
 		'name|+1': '@cname',
@@ -380,12 +463,110 @@ Mock.mock('/register/prepersonal', {
 		'profession': '@string'
 	}]
 })
+Mock.mock('/register/formalregister', {
+	'data|16-30': [{
+		'name|+1': '@cname',
+		'code|+1': _Vcode.slice(0),
+		'date': '@datetime',
+		'times|1-5': 2,
+		'testtype|1': _Vcode.slice(0, 6),
+		'prepareid': '18012601',
+		'isorg|1': _Vcode.slice(0, 2),
+		'org|1': _Vcode.slice(0, 10),
+		'idcard': '@id',
+		'sex|1': _Vcode.slice(1, 3),
+		'birthday': '@date',
+		'age': function() {
+			let r = this.birthday.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/)
+      if (r === null)	return ''
+      return new Date().getFullYear() - r[1]
+		},
+		'province': '@province',
+		'city': '@city',
+		'county': '@county',
+		'marriage|1': _Vcode.slice(0, 4),
+		'nation': '汉',
+		'detailaddr': function() {
+			return this.county + this.city + this.province + 'xx街道xx号'
+		},
+		'phone': '@id',
+		'email': '@email',
+		'profession': '@string'
+	}]
+})
+Mock.mock('/register/orgregister', {
+	'data|16-30': [{
+		'name|+1': '@cname',
+		'code|+1': _Vcode.slice(0),
+		'idcard': '@id',
+		'sex|1': _Vcode.slice(1, 3),
+		'birthday': '@date',
+		'age': function() {
+			let r = this.birthday.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/)
+      if (r === null)	return ''
+      return new Date().getFullYear() - r[1]
+		},
+		'organization|1': _Vcode.slice(0, 11),
+		'orggroup|1': _Vcode.slice(0, 6),
+		'isregister|1': _Vcode.slice(0, 2)
+	}]
+})
 /* 体检管理 */
+Mock.mock('/management/personalexamination', {
+	'data|16-30': [{
+		'name|+1': '@cname',
+		'code|+1': _Vcode.slice(0),
+		'date': '@date',
+		'times|1-5': 2,
+		'testtype|1': _Vcode.slice(0, 6),
+		'prepareid': '18012601',
+		'registerid': '18012601',
+		'isorg|1': _Vcode.slice(0, 2),
+		'org|1': _Vcode.slice(0, 10),
+		'idcard': '@id',
+		'sex|1': _Vcode.slice(1, 3),
+		'birthday': '@date',
+		'age': function() {
+			let r = this.birthday.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/)
+      if (r === null)	return ''
+      return new Date().getFullYear() - r[1]
+		},
+		'istotal|1': _Vcode.slice(0, 2),
+		'phone': '@id',
+		'address': '@county'
+	}]
+})
+Mock.mock('/management/reportsend', {
+	'data|16-30': [{
+		'name|+1': '@cname',
+		'code|+1': _Vcode.slice(0),
+		'date': '@datetime',
+		'times|1-5': 2,
+		'testtype|1': _Vcode.slice(0, 6),
+		'prepareid': '18012601',
+		'registerid': '18012601',
+		'isorg|1': _Vcode.slice(0, 2),
+		'org|1': _Vcode.slice(0, 10),
+		'idcard': '@id',
+		'sex|1': _Vcode.slice(1, 3),
+		'birthday': '@date',
+		'age': function() {
+			let r = this.birthday.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/)
+      if (r === null)	return ''
+      return new Date().getFullYear() - r[1]
+		},
+		'issend|1': _Vcode.slice(0, 2),
+		'sender': '@cname',
+		'senddate': '@date',
+		'print': 1
+	}]
+})
 Mock.mock('/management/personalinfo', {
 	'data|16-30': [{
 		'name|+1': '@cname',
 		'code|+1': _Vcode.slice(0),
 		'idcard': '@id',
+		'cardtype|1': _Vcode.slice(0, 5),
 		'sex|1': _Vcode.slice(1, 3),
 		'birthday': '@date',
 		'age': function() {
@@ -458,4 +639,39 @@ Mock.mock('/management/orgexamination', {
 		'isprepare|1': _Vcode.slice(0, 2),
 		'orggroup': []
 	}]
+})
+Mock.mock('/management/returnvisit', {
+	'data|16-30': [{
+		'name|+1': '@cname',
+		'code|+1': _Vcode.slice(0),
+		'date': '@datetime',
+		'registerid': '18012601',
+		'idcard': '@id',
+		'sex|1': _Vcode.slice(1, 3),
+		'birthday': '@date',
+		'age': function() {
+			let r = this.birthday.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/)
+      if (r === null)	return ''
+      return new Date().getFullYear() - r[1]
+		},
+		'phone': '@id',
+		'visitdoctor': '@name',
+		'visitdate': '@date',
+		'isnotice|1': _Vcode.slice(0, 2),
+		'noticeaccount': '@cname',
+		'noticedate': '@date'
+	}]
+})
+
+/* 医生工作台 */
+Mock.mock('/doctor/gettester', {
+	'data': {
+		'name': '@cname',
+		'code': '20180227001',
+		'registerid': '18012601',
+		'sex|1': _Vcode.slice(1, 3),
+		'age|1-90': 18,
+		'testtype': '健康体检',
+		'imageUrl': '@dataImage'
+	}
 })

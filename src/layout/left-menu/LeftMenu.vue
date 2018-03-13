@@ -1,10 +1,10 @@
 <template>
   <div class="left clearfix" :style="{'height':win_size.height,'width':$store.state.leftmenu.width}" id='admin-left'>
     <div id='left-menu'>
-      <div class='logo-container'>
-        <img src="../../assets/logo.png" class='logo' alt="">
-      </div>
       <div class='tac'>
+        <div class='logo-container'>
+          <img src="../../assets/logo.png" class='logo' alt="">
+        </div>
         <el-menu class="el-menu-vertical" theme="dark" :default-active="$route.path" @open="handleOpen" @close="handleClose" :collapse="!$store.state.leftmenu.menu_flag"  unique-opened router>
           <template v-for="(item,index) in $router.options.routes">
             <el-submenu :index="item.path" :key='item.path' v-if='!item.hidden && !item.ignore'>
@@ -62,16 +62,13 @@
   .tac {
     height: 100%;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
-    > .el-menu {
-      height: 100%;
-    }
   }
   .left-fixed-right-auto {
     padding-top: 50px;
   }
 
   .left {
-    position: fixed;
+    position: absolute;
     float: left;
     /*width:190px;
     margin-right:-190px;

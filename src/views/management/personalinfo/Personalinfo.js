@@ -1,4 +1,4 @@
-import {notifyConfig} from '@/utils/'
+import {notifyConfig, deepClone} from '@/utils/'
 import {getSex, getMarriage, getCardType} from '@/api/constant'
 import {queryPersonalInfo, queryOrganization} from '@/api/management'
 import addressOption from '@/api/area'
@@ -11,8 +11,9 @@ export default {
 				page: 1,
 				limit: 10,
 				name: '',
+        cardtype: '0',
 				idcard: '',
-        organization: '1'
+        organization: '0'
 			},
 			tableData: [],  //  表格数据
 			rules: {
@@ -47,7 +48,8 @@ export default {
         children: 'child'
       },
       sexOption: [],			// 性别下拉
-      orgOptSel: []				// 查询下拉 体检单位
+      orgOptSel: [],			// 查询下拉 体检单位
+      cardTypeOptSel: []       // 查询下拉 体检单位
 		}
 	},
 	created () {
@@ -67,6 +69,13 @@ export default {
       let valArr = []
       valArr = this.orgOption.filter(val => {
         return val.code === item.organization
+      })
+      return valArr.length ? valArr[0].name : ''
+    },
+    formatterCardtype(item) { // 证件类型
+      let valArr = []
+      valArr = this.cardtypeOption.filter(val => {
+        return val.code === item.cardtype
       })
       return valArr.length ? valArr[0].name : ''
     },
@@ -96,7 +105,10 @@ export default {
       })
       // 常量查询 证件类型
       getCardType().then(response => {
-        this.marriageOption = response.data
+        let _res = response.data
+        this.cardtypeOption = deepClone(_res)
+        this.cardTypeOptSel = deepClone(_res)
+        this.cardTypeOptSel.unshift({code: '0', name: '不限'})
       })
       // 常量查询 婚姻状况
       getMarriage().then(response => {

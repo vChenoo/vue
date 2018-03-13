@@ -1,17 +1,16 @@
 import {notifyConfig} from '@/utils/'
-import {queryClinical, queryColor} from '@/api/database'
+import {queryClinicalType, saveClinicalType, updateClinicalType} from '@/api/database'
 
 export default {
 	name: 'clinical',
 	data () {
 		return {
 			queryData: {
-				page: 1,
-        limit: 10,
-				name: '',
-				code: ''
+				number: 1,
+        size: 10,
+				typeName: ''
 			},
-			colorOption: [],
+			// colorOption: [],
 			rules: {
 				name: [
 					{required: true, message: '请输入临床类型名称', trigger: 'blur'}
@@ -34,25 +33,25 @@ export default {
   	this.getList()
   },
 	computed: {
-  	total () { // 记录总数
+  	/* total () { // 记录总数
       return this.tableData.length
-    },
+    } ,
     tablePageData () { // 表格分页
       return this.tableData ? this.tableData.slice(this.queryData.limit * (this.queryData.page - 1), this.queryData.page * this.queryData.limit) : this.tableData
-    }
+    } */
   },
 	methods: {
 		/* 格式化 */
-  	formatterEnabled (item) { // 操作类型
+  	/* formatterEnabled (item) { // 操作类型
       let valArr = []
       valArr = this.colorOption.filter(val => {
         return val.code === item.color
       })
       return valArr.length ? valArr[0].name : ''
-    },
+    }, */
 		/* 筛选 */
   	indexMethod (index) { // 表格序号
-      return this.queryData.limit * (this.queryData.page - 1) + 1 + index
+      return this.queryData.size * (this.queryData.number - 1) + 1 + index
     },
     /* 动画 */
     enter (el, done) {
@@ -65,31 +64,35 @@ export default {
     },
   	/* 交互方法 */
 		clickQuery () {
-			console.log('业务类型查询')
+			queryClinicalType(this.queryData).then(response => {
+        this.tableData = response.page
+      })
 		},
 		getList () { // 查询接口
       // 查询颜色编码常量
-      queryColor().then(response => {
+      /* queryColor().then(response => {
         this.colorOption = response.data
       })
       // 查询临床类型
       queryClinical().then(response => {
-        this.tableData = response.data
-      })
+        // this.tableData = response.data
+      }) */
+      this.clickQuery()
     },
     handleSizeChange (val) { // 每页条数改变
-      this.queryData.limit = val
+      this.queryData.size = val
     },
     handleCurrentChange (val) { // 当前页数改变
-      this.queryData.page = val
+      this.queryData.number = val
     },
     resetFormTemp () {
       this.formTemp = {
-        name: '',
-        code: '',
-        color: null,
-        lastaccount: '',
-        lasttime: ''
+        id: '',
+        typeName: '',
+        clinicalTypeColor: '',
+        remark: '',
+        editUser: '',
+        updateDate: ''
       }
     },
     clickCreate () { // 新增交互
@@ -101,9 +104,12 @@ export default {
       this.$refs['formEdit'].validate((valid) => {
         if (valid) {
           console.log(this.formTemp)
-          this.tableData.unshift(this.formTemp)
-          this.visibleList = true
-          this.$notify(notifyConfig('新增', 'success'))
+          /* this.tableData.unshift(this.formTemp) */
+          saveClinicalType(this.formTemp).then(response => {
+            this.visibleList = true
+            this.clickQuery()
+            this.$notify(notifyConfig('新增', 'success'))
+          })
         } else {
           console.log('校验不通过')
           return false
@@ -120,10 +126,13 @@ export default {
       this.$refs['formEdit'].validate((valid) => {
         if (valid) {
           console.log(this.formTemp)
-          let tbIndex = this.indexMethod(this.indexTemp) - 1
-          this.tableData.splice(tbIndex, 1, this.formTemp)
-          this.visibleList = true
-          this.$notify(notifyConfig('更新', 'success'))
+          updateClinicalType(this.formTemp).then(response => {
+            this.visibleList = true
+            this.clickQuery()
+            this.$notify(notifyConfig('更新', 'success'))
+          })
+          /* let tbIndex = this.indexMethod(this.indexTemp) - 1
+          this.tableData.splice(tbIndex, 1, this.formTemp) */
         } else {
           console.log('校验不通过')
           return false

@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request_mock'
 
 export function getWhether(data) {
 	return request({
@@ -111,6 +111,18 @@ export function getOrgNature(data) {
 export function getCardType(data) {
 	return request({
 		url: '/constant/cardtype',
+		method: 'get'
+	})
+}
+export function getWorkstation(data) {
+	return request({
+		url: '/constant/workstation',
+		method: 'get'
+	})
+}
+export function getTotalGroup(data) {
+	return request({
+		url: '/constant/totalgroup',
 		method: 'get'
 	})
 }

@@ -1,4 +1,6 @@
 import Bread from '../bread/Bread.vue'
+import {notifyConfig} from '@/utils/'
+import {getCookie, removeCookie} from '@/utils/cookie'
 
 export default {
 	name: 'head-nav',
@@ -6,8 +8,25 @@ export default {
 		Bread
 	},
 	data () {
+		let validatePwd = (rule, value, callback) => {
+			if (/\s+/g.test(value)) {
+				callback(new Error('输入密码不能包含空格'))
+			}
+		  if (this.changePwdForm.confirmpwd !== '') {
+		    this.$refs.formEdit.validateField('confirmpwd')
+		  }
+		  callback()
+		}
+		let validateConfirmPwd = (rule, value, callback) => {
+		  if (value !== this.changePwdForm.password) {
+		    callback(new Error('两次输入的密码不一致'))
+		  } else {
+		    callback()
+		  }
+		}
 		return {
 			activeIndex: '1',
+			userName: null,
 			colorChangeDialog: false,
 			colorOptions: [{
 				label: '黑色',
@@ -43,8 +62,30 @@ export default {
 				color: '#D1BA74'
 			}],
 			colorValue: '',
-			menuHidden: true
+			menuHidden: true,
+			changePwdDialog: false,
+			changePwdForm: {
+				password: '',
+				confirmpwd: ''
+			},
+			pwdRules: {
+				password: [
+				  {required: true, message: '请输入不少于6位的密码', min: 6, trigger: 'blur'},
+				  {validator: validatePwd, trigger: 'blur'}
+				],
+				confirmpwd: [
+				  {required: true, message: '请输入确认密码', trigger: 'blur'},
+				  {validator: validateConfirmPwd, trigger: 'blur'}
+				]
+			},
+			pwdRateMax: 3,
+			pwdRate: 0,
+			pwdRateText: ['弱', '中', '强'],
+			pwdRateColors: ['#FFEB3B', '#CDDC39', '#8BC34A']
 		}
+	},
+	created() {
+		this.userName = getCookie('testuser')
 	},
 	methods: {
 		toggleMenu () {
@@ -59,6 +100,9 @@ export default {
 				case 'logout':
 					this.logout()
 					break
+				case 'pass':
+					this.passWd()
+					break
 				default:
 					break
 			}
@@ -72,6 +116,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+      	removeCookie('testuser')
         this.$router.push('/login')
       }).catch(() => {})
     },
@@ -90,12 +135,12 @@ export default {
     	this.colorValue = ''
     },
     loadCss (fileName) {
-      var cssTag = document.getElementById('loadCss')
-	    var head = document.getElementsByTagName('head').item(0)
+      let cssTag = document.getElementById('loadCss')
+	    let head = document.getElementsByTagName('head').item(0)
 	    if (cssTag) {
 	      head.removeChild(cssTag)
 	    }
-	    var css = document.createElement('link')
+	    let css = document.createElement('link')
 	    css.href = '/static/theme/theme-' + fileName + '/index-color.css'
 	    css.rel = 'stylesheet'
 	    css.type = 'text/css'
@@ -103,11 +148,45 @@ export default {
 	    head.appendChild(css)
     },
     resetCss () {
-      var cssTag = document.getElementById('loadCss')
-	    var head = document.getElementsByTagName('head').item(0)
+      let cssTag = document.getElementById('loadCss')
+	    let head = document.getElementsByTagName('head').item(0)
 	    if (cssTag) {
 	      head.removeChild(cssTag)
 	    }
+    },
+    passWd () {
+    	this.changePwdDialog = true
+    },
+    updatePwd () {
+    	this.$refs['formPwd'].validate((valid) => {
+    	  if (valid) {
+    	    console.log(this.changePwdForm)
+    	    this.changePwdDialog = false
+    	    this.$notify(notifyConfig('修改', 'success'))
+    	  } else {
+    	    console.log('校验不通过')
+    	    return false
+    	  }
+    	})
+    },
+    changePwd(val) {
+    	this.pwdRate = 0
+			if (/\d/.test(val)) {
+				this.pwdRate++
+			}
+			if (/[A-Za-z]/.test(val)) {
+				this.pwdRate++
+			}
+			if (/\W/.test(val)) {
+				this.pwdRate++
+			}
+    },
+    handlePwdClose() {
+    	this.resetForm('formPwd')
+    	this.pwdRate = 0
+    },
+    resetForm (formName) {
+    	this.$refs[formName].resetFields()
     }
 	}
 }

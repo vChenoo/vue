@@ -2,6 +2,7 @@
 	<div class="orggroup">
 		<transition name="fade" mode="out-in" v-on:enter="enter">
 			<div key="list" class="page-show" v-if="visibleList">
+				<content-title>单位分组</content-title>
 				<el-form :model="queryData" size="small" inline>
 					<el-form-item label="单位分组名称">
 				    <el-input v-model="queryData.name" placeholder="单位分组名称"></el-input>
@@ -22,21 +23,21 @@
 				    </el-select>
 				  </el-form-item>
 				  <el-form-item>
-				    <el-button type="primary" @click="clickQuery">查询</el-button>
+				    <el-button type="primary" @click="clickQuery" icon="el-icon-search">查询</el-button>
 				    <el-button type="primary" @click='clickCreate' icon="el-icon-plus">新增</el-button>
 				  </el-form-item>
 				</el-form>
 				<el-table :data="tablePageData" border highlight-current-row style="width: 100%" align='center' size="small">
 		      <el-table-column type="index" :index="indexMethod" label="序号" align="center" min-width="50"></el-table-column>
-		      <el-table-column prop="name" label="单位分组名称" align="center" min-width="130"></el-table-column>
-		      <el-table-column prop="grouptype" label="分组类型" align="center" min-width="130" :formatter="formatterGroup"></el-table-column>
+		      <el-table-column prop="name" label="单位分组名称" align="center" min-width="130" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="grouptype" label="分组类型" align="center" min-width="130" :formatter="formatterGroup" show-overflow-tooltip></el-table-column>
 		      <el-table-column prop="statement" label="结算人数" align="center" min-width="100" :formatter="formatterState"></el-table-column>
 		      <el-table-column prop="code" label="体检类别" align="center" min-width="100" :formatter="formatterType"></el-table-column>
-		      <el-table-column prop="isenabled" label="是否启用" align="center" min-width="100" :formatter="formatterWhether"></el-table-column>
-		      <el-table-column label="操作" min-width="200" align='center'>
+		      <el-table-column prop="isenabled" label="是否启用" align="center" min-width="80" :formatter="formatterWhether"></el-table-column>
+		      <el-table-column label="操作" min-width="120" align='center'>
             <template slot-scope="scope">
-              <el-button @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
-              <el-button @click="deleteData(scope.$index)" type="danger" size="mini" icon="el-icon-delete"></el-button>
+              <el-button class="op-mini" @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
+              <el-button class="op-mini" @click="deleteData(scope.$index)" type="danger" size="mini" icon="el-icon-delete"></el-button>
             </template>
           </el-table-column>
 		    </el-table>
@@ -45,6 +46,7 @@
 		    </div>
 			</div>
 			<div key="edit" class="page-show" v-else>
+				<content-title>单位分组详情</content-title>
 				<el-form class="group-form" :model="formTemp" :rules="rules" ref="formEdit" size="small" label-width="120px" label-position="left">
 					<h4>分组主要信息</h4>
 					<div class="group">
@@ -105,15 +107,15 @@
 		    	      </el-form-item>
 				      </el-col>
 				      <el-col :sm="24" :md="8">
-				      	<el-form-item label="实际费用" prop="price">
-					      	<el-input v-model="Price" disabled></el-input>
+				      	<el-form-item label="加项折扣" prop="addcount">
+					        <el-input v-model="formTemp.addcount"></el-input>
 					      </el-form-item>
 				      </el-col>
 						</el-row>
 						<el-row :gutter="30">
 							<el-col :sm="24" :md="8">
-								<el-form-item label="加项折扣" prop="addcount">
-					        <el-input v-model="formTemp.addcount"></el-input>
+				      	<el-form-item label="实际费用" prop="price">
+					      	<el-input v-model="Price" disabled></el-input>
 					      </el-form-item>
 							</el-col>	
 							<el-col :sm="24" :md="8">
@@ -155,15 +157,11 @@
 		      		</template>
 		      	</el-form-item>
 		      </div>
-		      <el-col :span="24">
-		      	<el-form-item>
-			        <div class="submit-container">
-			          <el-button v-if="statusForm=='create'" type="primary" @click="createData">确定</el-button>
-			          <el-button v-else type="primary" @click="updateData">确定</el-button>
-			          <el-button @click="visibleList = true">返回</el-button>
-			        </div>
-			      </el-form-item>
-		      </el-col>
+	        <div class="submit-container">
+	          <el-button v-if="statusForm=='create'" type="primary" @click="createData">确定</el-button>
+	          <el-button v-else type="primary" @click="updateData">确定</el-button>
+	          <el-button @click="visibleList = true">返回</el-button>
+	        </div>
 		    </el-form>
 			</div>
 		</transition>

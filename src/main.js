@@ -11,6 +11,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/display.css'
 import '../static/theme/default.css'
 import '../static/iconfont/iconfont.css'
+import ContentTitle from '@/components/ContentTitle'
+/* 全局组件 */
+Vue.component('ContentTitle', ContentTitle)
 
 Vue.use(ElementUI)
 /* eslint-disable no-new */

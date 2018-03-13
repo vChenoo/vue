@@ -2,6 +2,7 @@
 	<div class="groupproject">
 		<transition name="fade" mode="out-in" v-on:enter="enter">
 			<div key="list" class="page-show" v-if="visibleList">
+				<content-title>组合项目</content-title>
 				<el-form :model="queryData" size="small" inline>
 					<el-form-item label="组合项目名称">
 				    <el-input v-model="queryData.name" placeholder="组合项目名称"></el-input>
@@ -17,21 +18,21 @@
 				    </el-select>
 				  </el-form-item>
 				  <el-form-item>
-				    <el-button type="primary" @click="clickQuery">查询</el-button>
+				    <el-button type="primary" @click="clickQuery" icon="el-icon-search">查询</el-button>
 				    <el-button type="primary" @click='clickCreate' icon="el-icon-plus">新增</el-button>
 				  </el-form-item>
 				</el-form>
 				<el-table :data="tablePageData" border highlight-current-row style="width: 100%" align='center' size="small">
-		      <el-table-column type="index" :index="indexMethod" label="序号" align="center" min-width="50"></el-table-column>
-		      <el-table-column prop="name" label="组合项目名称" align="center" min-width="100"></el-table-column>
-		      <el-table-column prop="department" label="体检科室" align="center" min-width="130" :formatter="formatterDp"></el-table-column>
-		      <el-table-column prop="clinical" label="临床类型" align="center" min-width="130" :formatter="formatterClinical"></el-table-column>
-		      <el-table-column prop="originalprice" label="标准价格" align="center" min-width="100"></el-table-column>
-		      <el-table-column prop="isenabled" label="是否启用" align="center" min-width="100" :formatter="formatterWhether"></el-table-column>
-		      <el-table-column label="操作" min-width="200" align='center'>
+		      <el-table-column type="index" :index="indexMethod" label="序号" align="center" min-width="40"></el-table-column>
+		      <el-table-column prop="name" label="组合项目名称" align="center" min-width="80" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="department" label="体检科室" align="center" min-width="65" :formatter="formatterDp" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="clinical" label="临床类型" align="center" min-width="65" :formatter="formatterClinical" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="originalprice" label="标准价格" align="center" min-width="50"></el-table-column>
+		      <el-table-column prop="isenabled" label="是否启用" align="center" min-width="40" :formatter="formatterWhether"></el-table-column>
+		      <el-table-column label="操作" min-width="100" align='center'>
             <template slot-scope="scope">
-              <el-button @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
-              <el-button @click="deleteData(scope.$index)" type="danger" size="mini" icon="el-icon-delete"></el-button>
+              <el-button class="op-mini" @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
+              <el-button class="op-mini" @click="deleteData(scope.$index)" type="danger" size="mini" icon="el-icon-delete"></el-button>
             </template>
           </el-table-column>
 		    </el-table>
@@ -40,6 +41,7 @@
 		    </div>
 			</div>
 			<div key="edit" class="page-show" v-else>
+				<content-title>组合项目详情</content-title>
 				<el-form class="group-form" :model="formTemp" :rules="rules" ref="formEdit" size="small" label-width="120px" label-position="left">
 					<h4>组合项目主要信息</h4>
 					<div class="group">
@@ -255,15 +257,11 @@
 				    	选择耗材
 				    </el-button>
 		      </div>
-		      <el-col :span="24">
-		      	<el-form-item>
-			        <div class="submit-container">
-			          <el-button v-if="statusForm=='create'" type="primary" @click="createData">确定</el-button>
-			          <el-button v-else type="primary" @click="updateData">确定</el-button>
-			          <el-button @click="visibleList = true">返回</el-button>
-			        </div>
-			      </el-form-item>
-		      </el-col>
+	        <div class="submit-container">
+	          <el-button v-if="statusForm=='create'" type="primary" @click="createData">确定</el-button>
+	          <el-button v-else type="primary" @click="updateData">确定</el-button>
+	          <el-button @click="visibleList = true">返回</el-button>
+	        </div>
 		    </el-form>
 			</div>
 		</transition>

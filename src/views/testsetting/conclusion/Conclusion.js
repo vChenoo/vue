@@ -1,10 +1,8 @@
 import {notifyConfig} from '@/utils/'
-import ContentTitle from '@/components/ContentTitle'
 import {queryConclusion} from '@/api/testsetting'
 
 export default {
 	name: 'conclusion',
-  components: {ContentTitle},
 	data () {
 		return {
 			queryData: {

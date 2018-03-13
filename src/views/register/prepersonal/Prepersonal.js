@@ -74,6 +74,13 @@ export default {
       })
       return valArr.length ? valArr[0].name : ''
     },
+    formatterSex (item) { // 性别
+      let valArr = []
+      valArr = this.sexOption.filter(val => {
+        return val.code === item.sex
+      })
+      return valArr.length ? valArr[0].name : ''
+    },
 		/* 筛选 */
   	indexMethod (index) { // 表格序号
       return this.queryData.limit * (this.queryData.page - 1) + 1 + index

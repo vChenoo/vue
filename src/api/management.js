@@ -1,5 +1,19 @@
-import request from '@/utils/request'
+import request from '@/utils/request_mock'
 
+export function queryPersonalexamination (data) {
+	return request({
+		url: '/management/personalexamination',
+		method: 'get',
+		data
+	})
+}
+export function queryReportSend (data) {
+	return request({
+		url: '/management/reportsend',
+		method: 'get',
+		data
+	})
+}
 export function queryPersonalInfo (data) {
 	return request({
 		url: '/management/personalinfo',
@@ -24,6 +38,13 @@ export function queryOrganization (data) {
 export function queryOrgexamination (data) {
 	return request({
 		url: '/management/orgexamination',
+		method: 'get',
+		data
+	})
+}
+export function queryReturnVisit (data) {
+	return request({
+		url: '/management/returnvisit',
 		method: 'get',
 		data
 	})

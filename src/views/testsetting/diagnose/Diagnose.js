@@ -1,4 +1,4 @@
-import {notifyConfig} from '@/utils/'
+import {notifyConfig, deepClone} from '@/utils/'
 import {getDepartment, getWhether} from '@/api/constant'
 import {queryClinical} from '@/api/database'
 import {queryDiagnose} from '@/api/testsetting'
@@ -34,7 +34,7 @@ export default {
 			},
 			formTemp: null, // 表单渲染值
       indexTemp: null,  //  表单渲染值对应序号
-      visibleList: true,  // 列表是否可见
+      visibleList: 1,  // 列表是否可见
       statusForm: 'create', //  'update' or 'create'
       dpOption: [],				// 科室下拉
       clinicalOption: [],	// 临床类型下拉
@@ -44,7 +44,27 @@ export default {
       projectOption: [],  // 体检项目列表
       visibleClinical: false,
       visibleClinicalSel: false,
-      visibleSample: false
+      visibleSample: false,
+      /* 关联科室 */
+      filterText: '',
+      dpTreeData: [{
+        code: 1,
+        name: '内科'
+      }, {
+        code: 2,
+        name: '检验科',
+        children: [{
+          id: 50,
+          name: '血球类'
+        }, {
+          code: 51,
+          name: '生化类'
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      }
 		}
 	},
 	created () {
@@ -56,6 +76,11 @@ export default {
     },
     tablePageData () { // 表格分页
       return this.tableData.slice(this.queryData.limit * (this.queryData.page - 1), this.queryData.page * this.queryData.limit)
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.dpTree.filter(val)
     }
   },
 	methods: {
@@ -157,14 +182,14 @@ export default {
     clickCreate () { // 新增交互
       this.statusForm = 'create'
       this.resetFormTemp()
-      this.visibleList = false
+      this.visibleList = 2
     },
     createData () {
       this.$refs['formEdit'].validate((valid) => {
         if (valid) {
           console.log(this.formTemp)
           this.tableData.unshift(this.formTemp)
-          this.visibleList = true
+          this.visibleList = 1
           this.setEdit()
           this.$notify(notifyConfig('新增', 'success'))
         } else {
@@ -177,7 +202,7 @@ export default {
       this.statusForm = 'update'
       this.indexTemp = index
       this.formTemp = Object.assign({}, row)
-      this.visibleList = false
+      this.visibleList = 2
     },
     updateData () {
       this.$refs['formEdit'].validate((valid) => {
@@ -185,7 +210,7 @@ export default {
           console.log(this.formTemp)
           let tbIndex = this.indexMethod(this.indexTemp) - 1
           this.tableData.splice(tbIndex, 1, this.formTemp)
-          this.visibleList = true
+          this.visibleList = 1
           this.setEdit()
           this.$notify(notifyConfig('更新', 'success'))
         } else {
@@ -258,6 +283,23 @@ export default {
         v.originalContent = v.content
         return v
       })
+    },
+    /* 关联科室 */
+    clickConnect(row, index) {
+      this.visibleList = 3
+      this.initDpTree()
+    },
+    initDpTree() {
+      this.dpTreeData = deepClone(this.dpOption)
+      this.dpTreeData[1].children = deepClone(this.clinicalOption)
+    },
+    filterNode (value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    submitConnect() {
+      this.visibleList = 1
+      console.log(this.$refs.dpTree.getCheckedNodes())
     }
 	}
 }

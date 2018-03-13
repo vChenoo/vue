@@ -1,15 +1,25 @@
 import axios from 'axios'
+import qs from 'qs'
 import { Message, Confirm } from 'element-ui'
 
 /* eslint-disable */
 const service = axios.create({
-	/* baseURL: 'http://localhost:8081/', */
-	timeout: 1000
+	/* baseURL: 'http://localhost:8081/' */
+	baseURL: 'http://172.16.4.210:8080/controller/',
+	headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+  transformRequest: [function (data) {
+    return qs.stringify(data, { allowDots: true })
+  }]
 })
 // 请求拦截器
 service.interceptors.request.use(config => {
-	console.log('发送请求')
-	console.log(config)
+	config.data.currentUserAccount = 'admin'
+	config.data.digest = 'aaa'
+	if (config.data.number !== undefined) {
+		config.data.number--
+	}
 	return config
 }, error => {
 	console.log('错误：发送请求')
@@ -36,6 +46,8 @@ service.interceptors.response.use(
 	  	/* eslint-disable */
 	   	return Promise.reject('error')
   	} else {
+  		console.log('接收请求' + response.config.url)
+  		console.log(response.data)
 			return response.data
 		}
 	},

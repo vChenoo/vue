@@ -6,11 +6,20 @@ export default {
   name: 'systemtools',
   component: Home,
   meta: {
-    icon: 'tj-management',
+    icon: 'setting',
     title: '系统工具'
   },
-  redirect: '/systemtools/systemlog',
+  redirect: '/systemtools/systemaccount',
   children: [
+    {
+      path: 'systemaccount',
+      name: 'systemaccount',
+      meta: {
+        icon: 'tj-zytz',
+        title: '账户管理'
+      },
+      component: Systemtools.Systemaccount
+    },
     {
       path: 'systemlog',
       name: 'systemlog',
@@ -30,13 +39,13 @@ export default {
       component: Systemtools.Systemclear
     },
     {
-      path: 'register',
-      name: 'register',
+      path: 'systemregister',
+      name: 'systemregister',
       meta: {
         icon: 'tj-zytz',
         title: '系统注册'
       },
-      component: Systemtools.Register
+      component: Systemtools.Systemregister
     }
   ]
 }

@@ -6,7 +6,7 @@ export default {
   name: 'testsetting',
   component: Home,
   meta: {
-    icon: 'tj-management',
+    icon: 'tj-muiiconradmin',
     title: '体检设置'
   },
   redirect: '/testsetting/testproject',
@@ -59,6 +59,14 @@ export default {
         title: '诊断建议管理'
       },
       component: Testsetting.Diagnose
+    }, {
+      path: 'workstation',
+      name: 'workstation',
+      meta: {
+        icon: 'tj-zytz',
+        title: '工作台管理'
+      },
+      component: Testsetting.Workstation
     }
   ]
 }

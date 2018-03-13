@@ -6,7 +6,7 @@ export default {
   name: 'database',
   component: Home,
   meta: {
-    icon: 'tj-management',
+    icon: 'tj-dataset',
     title: '基础数据维护'
   },
   redirect: '/database/servicetype',
@@ -20,7 +20,7 @@ export default {
       },
       component: Database.Clinical
     },
-    {
+    /* {
       path: 'color',
       name: 'color',
       meta: {
@@ -28,7 +28,7 @@ export default {
         title: '临床类型颜色管理'
       },
       component: Database.Color
-    },
+    }, */
     {
       path: 'testtype',
       name: 'testtype',
@@ -82,7 +82,7 @@ export default {
       component: Database.Othercharges
     }, {
       path: 'consumable',
-      name: 'othercharges',
+      name: 'consumable',
       meta: {
         icon: 'tj-zytz',
         title: '耗材管理'

@@ -2,6 +2,7 @@
 	<div class="preorganization">
 		<transition name="fade" mode="out-in" v-on:enter="enter">
 			<div key="list" class="page-show" v-if="visibleList">
+				<content-title>单位体检预登记</content-title>
 				<el-form :model="queryData" size="small" inline>
 					<el-form-item label="体检单位">
 				    <el-select v-model="queryData.organization" placeholder="体检单位">
@@ -14,19 +15,19 @@
 				    </el-select>
 				  </el-form-item>
 				  <el-form-item>
-				    <el-button type="primary" @click="clickQuery">查询</el-button>
+				    <el-button type="primary" @click="clickQuery" icon="el-icon-search">查询</el-button>
 				  </el-form-item>
 				</el-form>
 				<el-table :data="tablePageData" border highlight-current-row style="width: 100%" align='center' size="small">
 		      <el-table-column type="index" :index="indexMethod" label="序号" align="center" min-width="50"></el-table-column>
-		      <el-table-column prop="organization" label="单位名称" align="center" min-width="130" :formatter="formatterOrg"></el-table-column>
+		      <el-table-column prop="organization" label="单位名称" align="center" min-width="130" :formatter="formatterOrg" show-overflow-tooltip></el-table-column>
 		      <el-table-column prop="times" label="第几次体检" align="center" min-width="100"></el-table-column>
-		      <el-table-column prop="starttime" label="体检开始时间" align="center" min-width="100"></el-table-column>
-		      <el-table-column prop="endtime" label="体检结束时间" align="center" min-width="100"></el-table-column>
-		      <el-table-column prop="isprepare" label="是否预登记" align="center" min-width="130" :formatter="formatterWehter"></el-table-column>
-		      <el-table-column label="操作" min-width="200" align='center'>
+		      <el-table-column prop="starttime" label="体检开始时间" align="center" min-width="100" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="endtime" label="体检结束时间" align="center" min-width="100" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="isprepare" label="是否预登记" align="center" min-width="50" :formatter="formatterWehter" show-overflow-tooltip></el-table-column>
+		      <el-table-column label="操作" min-width="100" align='center'>
             <template slot-scope="scope">
-              <el-button @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
+              <el-button class="op-mini" @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
             </template>
           </el-table-column>
 		    </el-table>
@@ -35,13 +36,14 @@
 		    </div>
 			</div>
 			<div key="edit" class="page-show" v-else>
+				<content-title>单位体检预登记详情</content-title>
 				<div class="info">
-					<el-form class="group-form" :model="formTemp" ref="formEdit" size="small" label-width="120px" label-suffix="：" label-position="left">
+					<el-form class="group-form" :model="formTemp" ref="formEdit" size="small" label-width="100px" label-suffix="：" label-position="left">
 						<h4>单位体检信息</h4>
 						<div class="group">
 							<el-row :gutter="30">
 								<el-col :sm="24" :md="4">
-									<el-form-item label="体检单位" prop="organization">
+									<el-form-item label="体检单位" label-width="90px" prop="organization">
 						       	<span>{{formatterOrg(formTemp)}}</span>
 						      </el-form-item>
 								</el-col>
@@ -120,10 +122,10 @@
 	    	      	<el-form-item>	    	      		
 	    			      <el-button type="primary" @click="handleChangeGroup">更换分组</el-button>
 	    	      	</el-form-item>
-    			        <div class="submit-container">
-    			          <el-button type="primary" size="small" @click="updateData">登记确定</el-button>
-    			          <el-button size="small" @click="visibleList = true">返回</el-button>
-    			        </div>
+  			        <div class="submit-container">
+  			          <el-button type="primary" size="small" @click="updateData">登记确定</el-button>
+  			          <el-button size="small" @click="visibleList = true">返回</el-button>
+  			        </div>
 	    		    </el-form>
 	    	   	</div>
 			    </div>    

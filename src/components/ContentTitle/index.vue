@@ -15,7 +15,7 @@
 <style lang="scss" scoped>
 	.content-title {
 		padding: 4px 6px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 16px;
     color: #5a5e66;
     border-left: 3px solid #2dc3e8;

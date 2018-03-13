@@ -2,9 +2,15 @@
 	<div class="personalinfo">
 		<transition name="fade" mode="out-in" v-on:enter="enter">
 			<div key="list" class="page-show" v-if="visibleList">
+				<content-title>个人信息</content-title>
 				<el-form :model="queryData" size="small" inline>
 				  <el-form-item label="个人姓名">
 				    <el-input v-model="queryData.name" placeholder="个人姓名"></el-input>
+				  </el-form-item>
+				  <el-form-item label="证件类型">
+				    <el-select v-model="queryData.cardtype" placeholder="证件类型">
+				      <el-option v-for="item in cardTypeOptSel" :key="item.code" :value="item.code" :label="item.name"></el-option>
+				    </el-select>
 				  </el-form-item>
 				  <el-form-item label="身份证号">
 				    <el-input v-model="queryData.idcard" placeholder="身份证号"></el-input>
@@ -15,20 +21,21 @@
 				    </el-select>
 				  </el-form-item>
 				  <el-form-item>
-				    <el-button type="primary" @click="clickQuery">查询</el-button>
+				    <el-button type="primary" @click="clickQuery" icon="el-icon-search">查询</el-button>
 				    <el-button type="primary" @click='clickCreate' icon="el-icon-plus">新增</el-button>
 				  </el-form-item>
 				</el-form>
 				<el-table :data="tablePageData" border highlight-current-row style="width: 100%" align='center' size="small">
 		      <el-table-column type="index" :index="indexMethod" label="序号" align="center" min-width="50"></el-table-column>
-		      <el-table-column prop="name" label="姓名" align="center" min-width="130"></el-table-column>
-		      <el-table-column prop="idcard" label="证件号" align="center" min-width="130"></el-table-column>
-		      <el-table-column prop="sex" label="性别" align="center" min-width="100"></el-table-column>
-		      <el-table-column prop="organization" label="所属单位" align="center" min-width="100" :formatter="formatterOrg"></el-table-column>
-		      <el-table-column label="操作" min-width="200" align='center'>
+		      <el-table-column prop="name" label="姓名" align="center" min-width="130" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="cardtype" label="证件类型" align="center" min-width="100" :formatter="formatterCardtype"></el-table-column>
+		      <el-table-column prop="idcard" label="证件号" align="center" min-width="130" show-overflow-tooltip></el-table-column>
+		      <el-table-column prop="sex" label="性别" align="center" min-width="60"></el-table-column>
+		      <el-table-column prop="organization" label="所属单位" align="center" min-width="100" :formatter="formatterOrg" show-overflow-tooltip></el-table-column>
+		      <el-table-column label="操作" min-width="110" align='center'>
             <template slot-scope="scope">
-              <el-button @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
-              <el-button @click="deleteData(scope.$index)" type="danger" size="mini" icon="el-icon-delete"></el-button>
+              <el-button class="op-mini" @click="clickUpdate(scope.row, scope.$index)" type="primary" size="mini" icon="el-icon-edit"></el-button>
+              <el-button class="op-mini" @click="deleteData(scope.$index)" type="danger" size="mini" icon="el-icon-delete"></el-button>
             </template>
           </el-table-column>
 		    </el-table>
@@ -37,6 +44,7 @@
 		    </div>
 			</div>
 			<div key="edit" class="page-show" v-else>
+				<content-title>个人信息详情</content-title>
 				<el-form class="group-form" :model="formTemp" :rules="rules" ref="formEdit" size="small" label-width="120px" label-position="left">
 					<h4>人员信息</h4>
 					<div class="group">
@@ -129,18 +137,14 @@
 			      	</el-col>
 			      </el-row>
 					</div>
-		      <el-col :span="24">
-		      	<el-form-item>
-			        <div class="submit-container">
-			        	<template v-if="statusForm=='create'">
-			        		<el-button type="primary" @click="createData">确定</el-button>
-			        		<el-button @click="resetFormTemp">重置</el-button>
-			        	</template>			          
-			          <el-button v-else type="primary" @click="updateData">提交</el-button>
-			          <el-button @click="visibleList = true">返回</el-button>
-			        </div>
-			      </el-form-item>
-		      </el-col>
+	        <div class="submit-container">
+	        	<template v-if="statusForm=='create'">
+	        		<el-button type="primary" @click="createData">确定</el-button>
+	        		<el-button @click="resetFormTemp">重置</el-button>
+	        	</template>			          
+	          <el-button v-else type="primary" @click="updateData">提交</el-button>
+	          <el-button @click="visibleList = true">返回</el-button>
+	        </div>
 		    </el-form>
 			</div>
 		</transition>

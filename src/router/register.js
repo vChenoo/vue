@@ -6,7 +6,7 @@ export default {
   name: 'register',
   component: Home,
   meta: {
-    icon: 'tj-management',
+    icon: 'tj-yudengji',
     title: '体检登记'
   },
   redirect: '/register/prepersonal',
@@ -35,6 +35,22 @@ export default {
         title: '体检正式登记'
       },
       component: Register.Formalregister
+    }, {
+      path: 'formalcharge',
+      name: 'formalcharge',
+      meta: {
+        icon: 'tj-zytz',
+        title: '个人体检收费'
+      },
+      component: Register.Formalcharge
+    }, {
+      path: 'orgregister',
+      name: 'orgregister',
+      meta: {
+        icon: 'tj-zytz',
+        title: '单位批量正式登记'
+      },
+      component: Register.Orgregister
     }
   ]
 }

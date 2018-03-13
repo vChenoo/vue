@@ -2,15 +2,17 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import { Login } from '@/views/'
 import Main from './main'
-import One from './one'
+/* import One from './one'
 import Two from './two'
 import Three from './three'
-import Four from './four'
+import Four from './four' */
 import Systemtools from './systemtools'
 import Database from './database'
 import Testsetting from './testsetting'
 import Register from './register'
 import Management from './management'
+import Doctor from './doctor'
+import History from './history'
 
 Vue.use(Router)
 
@@ -32,14 +34,16 @@ export default new Router({
       component: Login
     },
     Main,
-    One,
+    /* One,
     Two,
     Three,
-    Four,
-    Systemtools,
-    Database,
-    Testsetting,
+    Four, */
     Register,
-    Management
+    Management,
+    Doctor,
+    History,
+    Testsetting,
+    Database,
+    Systemtools
   ]
 })

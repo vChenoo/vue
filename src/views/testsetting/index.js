@@ -4,6 +4,7 @@ import Groupproject from './groupproject'
 import Package from './package'
 import Conclusion from './conclusion'
 import Diagnose from './diagnose'
+import Workstation from './workstation'
 
 export default {
 	Testproject,
@@ -11,5 +12,6 @@ export default {
 	Groupproject,
 	Package,
 	Conclusion,
-	Diagnose
+	Diagnose,
+	Workstation
 }

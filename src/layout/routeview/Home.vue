@@ -50,7 +50,7 @@
 </script>
 <style scoped lang='scss'>
   .content {
-    padding: 16px;
+    padding: 10px 16px;
     background: #FFF;
   }
   .right-header {
